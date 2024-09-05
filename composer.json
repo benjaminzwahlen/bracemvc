@@ -18,6 +18,5 @@
             "email": "benzwahlen@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
     "license":"MIT"
 }
