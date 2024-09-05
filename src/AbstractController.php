@@ -1,4 +1,5 @@
 <?php
+namespace Benjaminzwahlen\Brace;
 
 use Benjaminzwahlen\Brace\common\storage\session\User;
 
