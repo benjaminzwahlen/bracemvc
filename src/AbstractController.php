@@ -1,12 +1,13 @@
 <?php
 
+use Benjaminzwahlen\Brace\common\storage\session\User;
 
 abstract class AbstractController
 {
 	public string $layoutName = "default";
 
 	protected array $_CONFIG;
-	protected USER $_USER;
+	protected User $_USER;
 	protected $db;
 
 	public function __construct(array &$config, &$db_, User &$_U)
