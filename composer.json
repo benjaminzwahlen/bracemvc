@@ -1,6 +1,6 @@
 {
     "name": "benjaminzwahlen/brace",
-    "description": "New MVC router",
+    "description": "New MVC router for my projects",
     "require": {
         "php": "^8.2"
     },
@@ -14,7 +14,7 @@
     },
     "authors": [
         {
-            "name": "Benjmain Zwahlen",
+            "name": "Benjamin Zwahlen",
             "email": "benzwahlen@gmail.com"
         }
     ],
