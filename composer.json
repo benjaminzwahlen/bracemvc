@@ -1,0 +1,23 @@
+{
+    "name": "benjaminzwahlen/brace",
+    "description": "New MVC router",
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Benjaminzwahlen\\Brace\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Benjmain Zwahlen",
+            "email": "benzwahlen@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "license":"MIT"
+}
