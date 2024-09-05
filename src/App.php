@@ -4,8 +4,8 @@ namespace Benjaminzwahlen\Brace;
 use Benjaminzwahlen\Brace\common\exceptions\ControllerNotFoundException;
 use Benjaminzwahlen\Brace\common\exceptions\FunctionNotFoundException;
 use Benjaminzwahlen\Brace\common\storage\session\User;
-use Request;
-use Router;
+use Benjaminzwahlen\Brace\http\Request;
+use Benjaminzwahlen\Brace\http\Router;
 
 require 'functions.php';
 

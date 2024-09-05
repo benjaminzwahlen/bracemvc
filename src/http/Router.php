@@ -1,4 +1,8 @@
 <?php
+namespace Benjaminzwahlen\Brace\http;
+
+use Benjaminzwahlen\Brace\common\exceptions\MethodNotAllowedException;
+use Benjaminzwahlen\Brace\common\exceptions\RouteNotFoundException;
 
 enum Method: string
 {
@@ -18,7 +22,7 @@ enum Method: string
 
         if (is_null($method)) {
             $enumName = static::class;
-            throw new ValueError("$name is not a valid name for enum \"$enumName\"");
+            throw new \ValueError("$name is not a valid name for enum \"$enumName\"");
         }
 
         return $method;
