@@ -1,5 +1,5 @@
 <?php
-namespace Benjaminzwahlen\Brace;
+namespace Benjaminzwahlen\Brace\boo;
 
 class A {
 
