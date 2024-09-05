@@ -8,6 +8,6 @@ class Test {
 
     public static function go()
     {
-        new A();
+        (new A())->out("Hello World");
     }
 }
