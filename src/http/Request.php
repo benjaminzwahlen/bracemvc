@@ -1,7 +1,7 @@
 <?php
-namespace Benjaminzwahlen\Brace\http;
+namespace benjaminzwahlen\bracemvc\http;
 
-use Benjaminzwahlen\Brace\common\Bag;
+use benjaminzwahlen\bracemvc\common\Bag;
 
 class Request
 {

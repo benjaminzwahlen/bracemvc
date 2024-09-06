@@ -1,6 +1,6 @@
 <?php
 
-use Benjaminzwahlen\Brace\http\Router;
+use benjaminzwahlen\bracemvc\http\Router;
 
 use function PHPUnit\Framework\assertEquals;
 

@@ -1,7 +1,7 @@
 <?php
-namespace Benjaminzwahlen\Brace;
+namespace benjaminzwahlen\bracemvc;
 
-use Benjaminzwahlen\Brace\common\storage\session\User;
+use benjaminzwahlen\bracemvc\common\storage\session\User;
 
 abstract class AbstractController
 {
@@ -36,15 +36,15 @@ abstract class AbstractController
 
 		ob_start();
 		require_once $filename;
-		$body = ob_get_contents();
-		ob_end_clean();
+		$body = ob_get_clean();
+
 
 		extract(["page_body_contents" => $body], EXTR_OVERWRITE);
 
 		ob_start();
 		require_once $template;
-		$page = ob_get_contents();
-		ob_end_clean();
+		$page = ob_get_clean();
+		
 
 		return $page;
 	}

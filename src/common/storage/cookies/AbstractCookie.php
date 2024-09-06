@@ -1,5 +1,5 @@
 <?php
-namespace Benjaminzwahlen\Brace\common\storage\cookies;
+namespace benjaminzwahlen\bracemvc\common\storage\cookies;
 
 
 interface AbstractCookie

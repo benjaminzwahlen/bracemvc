@@ -1,11 +1,12 @@
 <?php
-namespace Benjaminzwahlen\Brace;
 
-use Benjaminzwahlen\Brace\common\exceptions\ControllerNotFoundException;
-use Benjaminzwahlen\Brace\common\exceptions\FunctionNotFoundException;
-use Benjaminzwahlen\Brace\common\storage\session\User;
-use Benjaminzwahlen\Brace\http\Request;
-use Benjaminzwahlen\Brace\http\Router;
+namespace benjaminzwahlen\bracemvc;
+
+use benjaminzwahlen\bracemvc\common\exceptions\ControllerNotFoundException;
+use benjaminzwahlen\bracemvc\common\exceptions\FunctionNotFoundException;
+use benjaminzwahlen\bracemvc\common\storage\session\User;
+use benjaminzwahlen\bracemvc\http\Request;
+use benjaminzwahlen\bracemvc\http\Router;
 
 require 'functions.php';
 
@@ -17,12 +18,11 @@ class App
 	private Router $router;
 	private $db;
 
-	public function __construct(Router &$router, array &$_C, User &$u, &$db_)
+	public function __construct(Router &$router, array &$_C, User &$u)
 	{
 		$this->_CONFIG =  &$_C;
 		$this->_USER =  &$u;
 		$this->router =  &$router;
-		$this->db =  &$db_;
 	}
 	private function searchForController($dir, $search)
 	{
@@ -46,8 +46,11 @@ class App
 		return null;
 	}
 
-	public function run(string $routePathString, string $requestMethod, array &$_G, array &$_P)
+	public function run(string $path, string $requestMethod, array &$_G, array &$_P)
 	{
+		$routePathString = "/" . trim($path, "/");
+
+
 
 		$request = Request::parse($this->router, $routePathString, $requestMethod, $_G, $_P);
 
@@ -65,7 +68,7 @@ class App
 
 
 		if ($request->route->tokenArray != null)
-			$page = call_user_func_array([$controller, $request->route->functionName], array($request, ... $request->route->tokenArray));
+			$page = call_user_func_array([$controller, $request->route->functionName], array($request, ...$request->route->tokenArray));
 		else
 			$page = call_user_func_array([$controller, $request->route->functionName], array($request));
 

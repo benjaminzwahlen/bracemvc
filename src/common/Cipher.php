@@ -1,5 +1,5 @@
 <?php
-namespace Benjaminzwahlen\Brace\common;
+namespace benjaminzwahlen\bracemvc\common;
 class Cipher
 {
     public static function encrypt(#[\SensitiveParameter] $data, #[\SensitiveParameter] $key): string

@@ -1,5 +1,5 @@
 <?php
-namespace Benjaminzwahlen\Brace\common\exceptions;
+namespace benjaminzwahlen\bracemvc\common\exceptions;
 
 class RouteNotFoundException extends \Exception
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Benjaminzwahlen\Brace\common;
+namespace benjaminzwahlen\bracemvc\common;
 
 class Util
 {

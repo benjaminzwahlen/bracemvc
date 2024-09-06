@@ -1,36 +1,23 @@
 <?php
-namespace Benjaminzwahlen\Brace\common;
 
-use Benjaminzwahlen\Brace\common\exceptions\ConfigFileNotFoundException;
+namespace benjaminzwahlen\bracemvc\common;
 
 class Config
 {
-
-    private static string $defaultEnv = "default";
-
-    private static function loadVars($path)
+    public static function load($envVars): array
     {
-        if (file_exists($path)) {
-            $raw = yaml_parse_file($path);
-            return $raw ? $raw : array();
-        } else
-            throw new ConfigFileNotFoundException("Can't find: " . $path);
-    }
-
-    public static function load($env, $configPath): array
-    {
-        $defaultValues = Config::loadVars(str_replace("{env}", Config::$defaultEnv, $configPath));
-
-
-        $envValues = Config::loadVars(str_replace("{env}", $env, $configPath));
-
-        $values = array_replace_recursive($defaultValues, $envValues);
+        $values = [];
+        foreach ($envVars as $key => $value) {
+            $keyparts = explode(".", $key);
+            if (!array_key_exists($keyparts[0], $values))
+                $values[$keyparts[0]] = [];
+            $values[$keyparts[0]][$keyparts[1]] = $value;
+        }
 
         $values["current_time"] = time();
         $values["current_date"] = date("Y-m-d H:i:s", $values["current_time"]);
         $values["current_date_simple"] = date("Y-m-d", $values["current_time"]);
 
         return $values;
-
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "benjaminzwahlen/brace",
+    "name": "benjaminzwahlen/bracemvc",
     "description": "New MVC router for my projects",
     "require": {
         "php": "^8.2"
@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Benjaminzwahlen\\Brace\\": "src/"
+            "benjaminzwahlen\\bracemvc\\": "src/"
         }
     },
     "authors": [

@@ -1,8 +1,9 @@
 <?php
-namespace Benjaminzwahlen\Brace\http;
 
-use Benjaminzwahlen\Brace\common\exceptions\MethodNotAllowedException;
-use Benjaminzwahlen\Brace\common\exceptions\RouteNotFoundException;
+namespace benjaminzwahlen\bracemvc\http;
+
+use benjaminzwahlen\bracemvc\common\exceptions\MethodNotAllowedException;
+use benjaminzwahlen\bracemvc\common\exceptions\RouteNotFoundException;
 
 enum Method: string
 {
@@ -96,7 +97,7 @@ class Router
         ];
 
         if ($path == $route)
-        return $arr;
+            return $arr;
 
         $explodePath = array_values(array_filter(explode("/", $path)));
         $explodeRoute = array_values(array_filter(explode("/", $route)));
@@ -152,7 +153,5 @@ class Router
             throw new MethodNotAllowedException($path . " tried: " . $methodString);
         else
             throw new RouteNotFoundException($path);
-
     }
-
 }

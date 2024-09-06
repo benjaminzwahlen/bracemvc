@@ -1,7 +1,7 @@
 <?php
-namespace Benjaminzwahlen\Brace\common\storage\cookies;
+namespace benjaminzwahlen\bracemvc\common\storage\cookies;
 
-use Benjaminzwahlen\Brace\common\Cipher;
+use benjaminzwahlen\bracemvc\common\Cipher;
 
 abstract class AbstractCookieManager
 {

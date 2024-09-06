@@ -1,5 +1,5 @@
 <?php
-namespace Benjaminzwahlen\Brace\common\storage\session;
+namespace benjaminzwahlen\bracemvc\common\storage\session;
 
 class User implements AbstractSessionVar
 {
