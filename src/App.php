@@ -4,7 +4,6 @@ namespace benjaminzwahlen\bracemvc;
 
 use benjaminzwahlen\bracemvc\common\exceptions\ControllerNotFoundException;
 use benjaminzwahlen\bracemvc\common\exceptions\FunctionNotFoundException;
-use benjaminzwahlen\bracemvc\common\storage\session\User;
 use benjaminzwahlen\bracemvc\Request;
 use benjaminzwahlen\bracemvc\Router;
 
