@@ -40,22 +40,4 @@ abstract class AbstractSessionManager
     }
 
 
-
-    /*
-    * USER methods
-    */
-    public static function storeUser(User $user)
-    {
-        return AbstractSessionManager::store($user);
-    }
-
-    public static function fetchUser(): ?User
-    {
-        return AbstractSessionManager::fetch(User::getKey());
-    }
-
-    public static function destroyUser()
-    {
-        return AbstractSessionManager::destroy(User::getKey());
-    }
 }

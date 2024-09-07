@@ -1,6 +1,6 @@
 <?php
 
-namespace benjaminzwahlen\bracemvc\http;
+namespace benjaminzwahlen\bracemvc;
 
 use benjaminzwahlen\bracemvc\common\exceptions\MethodNotAllowedException;
 use benjaminzwahlen\bracemvc\common\exceptions\RouteNotFoundException;

@@ -2,51 +2,37 @@
 namespace benjaminzwahlen\bracemvc;
 
 use benjaminzwahlen\bracemvc\common\storage\session\User;
+use benjaminzwahlen\bracemvc\interceptors\InterceptorInterface;
 
 abstract class AbstractController
 {
 	public string $layoutName = "default";
 
 	protected array $_CONFIG;
-	protected User $_USER;
 	protected $db;
 
-	public function __construct(array &$config, &$db_, User &$_U)
+	private array $interceptors = [];
+
+	public function __construct(array &$config, &$db_)
 	{
 		$this->_CONFIG = &$config;
 		$this->db = &$db_;
-		$this->_USER = &$_U;
+	}
+
+	public function getInterceptors() : array
+	{
+		return $this->interceptors;
+	}
+	
+	public function registerInterceptor(InterceptorInterface $interceptor)
+	{
+		$this->interceptors[] = $interceptor;
 	}
 
 	public function render(string $name, array &$params = array())
 	{
-		$filename = "../app/views/" . $name . ".view.php";
+		return View::renderView($this->_CONFIG, $this->layoutName, $name, $params );
 
-		$template = "../app/views/layouts/" . $this->layoutName . ".view.php";
-
-		if (!file_exists($filename)) {
-			return "View file not found: " . $filename;
-		}
-
-
-		$params['_CONFIG'] = $this->_CONFIG;
-		$params['_USER'] = $this->_USER;
-		extract(["_" => $params], EXTR_OVERWRITE);
-		unset($params);
-
-		ob_start();
-		require_once $filename;
-		$body = ob_get_clean();
-
-
-		extract(["page_body_contents" => $body], EXTR_OVERWRITE);
-
-		ob_start();
-		require_once $template;
-		$page = ob_get_clean();
-		
-
-		return $page;
 	}
 
 	public function redirect($url)

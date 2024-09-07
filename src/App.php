@@ -5,8 +5,8 @@ namespace benjaminzwahlen\bracemvc;
 use benjaminzwahlen\bracemvc\common\exceptions\ControllerNotFoundException;
 use benjaminzwahlen\bracemvc\common\exceptions\FunctionNotFoundException;
 use benjaminzwahlen\bracemvc\common\storage\session\User;
-use benjaminzwahlen\bracemvc\http\Request;
-use benjaminzwahlen\bracemvc\http\Router;
+use benjaminzwahlen\bracemvc\Request;
+use benjaminzwahlen\bracemvc\Router;
 
 require 'functions.php';
 
@@ -14,15 +14,23 @@ require 'functions.php';
 class App
 {
 	private array $_CONFIG;
-	private User $_USER;
 	private Router $router;
 	private $db;
 
-	public function __construct(Router &$router, array &$_C, User &$u)
+	private AbstractController $controller;
+
+
+	public function __construct(Router &$router, array &$_C)
 	{
 		$this->_CONFIG =  &$_C;
-		$this->_USER =  &$u;
 		$this->router =  &$router;
+		// Create connection
+		$this->db = new \mysqli($_C['db']['host'], $_C['db']['user'], $_C['db']['password'], $_C['db']['db_name']);
+
+		// Check connection
+		if ($this->db->connect_error) {
+			die("Connection failed");
+		}
 	}
 	private function searchForController($dir, $search)
 	{
@@ -46,6 +54,8 @@ class App
 		return null;
 	}
 
+
+
 	public function run(string $path, string $requestMethod, array &$_G, array &$_P)
 	{
 		$routePathString = "/" . trim($path, "/");
@@ -61,16 +71,20 @@ class App
 
 		require_once $controllerPath;
 
-		$controller = new $request->route->controllerName($this->_CONFIG, $this->db, $this->_USER);
+		$this->controller = new $request->route->controllerName($this->_CONFIG, $this->db);
 
-		if (!method_exists($controller, $request->route->functionName))
+		if (!method_exists($this->controller, $request->route->functionName))
 			throw new FunctionNotFoundException("Not Found: " . $request->route->functionName . "(...)");
+
+		foreach ($this->controller->getInterceptors() as $i) {
+			$i->intercept($request);
+		}
 
 
 		if ($request->route->tokenArray != null)
-			$page = call_user_func_array([$controller, $request->route->functionName], array($request, ...$request->route->tokenArray));
+			$page = call_user_func_array([$this->controller, $request->route->functionName], array($request, ...$request->route->tokenArray));
 		else
-			$page = call_user_func_array([$controller, $request->route->functionName], array($request));
+			$page = call_user_func_array([$this->controller, $request->route->functionName], array($request));
 
 		if ($page != null)
 			print($page);
