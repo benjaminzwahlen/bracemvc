@@ -2,6 +2,8 @@
 
 namespace benjaminzwahlen\bracemvc;
 
+use benjaminzwahlen\bracemvc\common\BraceUser;
+use benjaminzwahlen\bracemvc\common\exceptions\AccessDeniedException;
 use benjaminzwahlen\bracemvc\common\exceptions\ControllerNotFoundException;
 use benjaminzwahlen\bracemvc\common\exceptions\FunctionNotFoundException;
 use benjaminzwahlen\bracemvc\Request;
@@ -12,24 +14,12 @@ require 'functions.php';
 
 class App
 {
-	private array $_CONFIG;
 	private Router $router;
-	private $db;
-
 	private AbstractController $controller;
 
-
-	public function __construct(Router &$router, array &$_C)
+	public function __construct(Router &$router)
 	{
-		$this->_CONFIG =  &$_C;
 		$this->router =  &$router;
-		// Create connection
-		$this->db = new \mysqli($_C['db']['host'], $_C['db']['user'], $_C['db']['password'], $_C['db']['db_name']);
-
-		// Check connection
-		if ($this->db->connect_error) {
-			die("Connection failed");
-		}
 	}
 	private function searchForController($dir, $search)
 	{
@@ -70,7 +60,7 @@ class App
 
 		require_once $controllerPath;
 
-		$this->controller = new $request->route->controllerName($this->_CONFIG, $this->db);
+		$this->controller = new $request->route->controllerName();
 
 		if (!method_exists($this->controller, $request->route->functionName))
 			throw new FunctionNotFoundException("Not Found: " . $request->route->functionName . "(...)");

@@ -4,20 +4,18 @@ namespace benjaminzwahlen\bracemvc\common;
 
 class Config
 {
-    public static function load($envVars): array
+    public static array $config;
+
+    public static function load($envVars)
     {
-        $values = [];
-        foreach ($envVars as $key => $value) {
-            $keyparts = explode(".", $key);
-            if (!array_key_exists($keyparts[0], $values))
-                $values[$keyparts[0]] = [];
-            $values[$keyparts[0]][$keyparts[1]] = $value;
-        }
+        Config::$config = array_merge([], $envVars);
+        Config::$config["current_time"] = time();
+        Config::$config["current_date"] = date("Y-m-d H:i:s", Config::$config["current_time"]);
+        Config::$config["current_date_simple"] = date("Y-m-d", Config::$config["current_time"]);
+    }
 
-        $values["current_time"] = time();
-        $values["current_date"] = date("Y-m-d H:i:s", $values["current_time"]);
-        $values["current_date_simple"] = date("Y-m-d", $values["current_time"]);
-
-        return $values;
+    public static function get($key): ?string
+    {
+        return Config::$config[$key] ?? null;
     }
 }

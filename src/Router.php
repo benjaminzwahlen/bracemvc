@@ -68,7 +68,7 @@ class Route
         $route->controllerName = $r['controller'];
         $route->functionName = $r['function'];
         $route->path = $r['path'];
-        //$route->requiredPermission = $r['permission'];
+        $route->requiredPermission = $r['permission'];
         $route->tokenArray = $tokenArray_;
 
         return $route;

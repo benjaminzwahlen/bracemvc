@@ -11,7 +11,7 @@ class View
 {
 
 
-    public static function renderView(array &$_CONFIG, string $layoutName, string $viewName, array &$params)
+    public static function renderView(string $layoutName, string $viewName, array &$params)
     {
         $filename = "../app/views/" . $viewName . ".view.php";
 
@@ -25,8 +25,7 @@ class View
             throw new ViewNotFoundException("Unable to find view file: " . $filename);
         }
 
-        //TODO
-        $params['_CONFIG'] = $_CONFIG;
+        //$params['_CONFIG'] = $_CONFIG;
         extract(["_" => $params], EXTR_OVERWRITE);
         unset($params);
 
