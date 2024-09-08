@@ -45,37 +45,57 @@ class App
 
 
 
-	public function run(string $path, string $requestMethod, array &$_G, array &$_P)
+	public function run(string $path, string $requestMethod, array &$_G, array &$_P, $onError)
 	{
-		$routePathString = "/" . trim($path, "/");
+		try {
+			$routePathString = "/" . trim($path, "/");
+
+			$request = Request::parse($this->router, $routePathString, $requestMethod, $_G, $_P);
+
+			$controllerPath = $this->searchForController('../app/controllers', $request->route->controllerName);
+			if ($controllerPath == null)
+				throw new ControllerNotFoundException("MVC: Unable to find controller: " . $request->route->controllerName);
 
 
+			require_once $controllerPath;
 
-		$request = Request::parse($this->router, $routePathString, $requestMethod, $_G, $_P);
+			$this->controller = new $request->route->controllerName();
 
-		$controllerPath = $this->searchForController('../app/controllers', $request->route->controllerName);
-		if ($controllerPath == null)
-			throw new ControllerNotFoundException($request->route->controllerName);
+			if (!method_exists($this->controller, $request->route->functionName))
+				throw new FunctionNotFoundException("MVC: Could not find function " . $request->route->functionName . " on " . $request->route->controllerName);
+
+			foreach ($this->controller->getInterceptors() as $i) {
+				$i->intercept($request);
+			}
 
 
-		require_once $controllerPath;
+			if ($request->route->tokenArray != null)
+				$page = call_user_func_array([$this->controller, $request->route->functionName], array($request, ...$request->route->tokenArray));
+			else
+				$page = call_user_func_array([$this->controller, $request->route->functionName], array($request));
 
-		$this->controller = new $request->route->controllerName();
+			if ($page != null)
+				print($page);
+		} catch (\Exception $e) {
 
-		if (!method_exists($this->controller, $request->route->functionName))
-			throw new FunctionNotFoundException("Not Found: " . $request->route->functionName . "(...)");
+			//Exception has been caught
+			//For production, render the application defined error page.
 
-		foreach ($this->controller->getInterceptors() as $i) {
-			$i->intercept($request);
+			$onError($e);
+			//$params = ["error"=>$e];
+			//echo View::renderView("default", "error", $params);
+
+			//For non-production, render a much more detailed error page.
+
+		} catch (\Error $e) {
+
+			//Exception has been caught
+			//For production, render the application defined error page.
+			$onError($e);
+			//$params = ["error"=>$e];
+			//echo View::renderView("default", "error", $params);
+
+			//For non-production, render a much more detailed error page.
 		}
-
-
-		if ($request->route->tokenArray != null)
-			$page = call_user_func_array([$this->controller, $request->route->functionName], array($request, ...$request->route->tokenArray));
-		else
-			$page = call_user_func_array([$this->controller, $request->route->functionName], array($request));
-
-		if ($page != null)
-			print($page);
 	}
 }

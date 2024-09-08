@@ -18,11 +18,11 @@ class View
         $template = "../app/views/layouts/" . $layoutName . ".view.php";
 
         if (!file_exists($template)) {
-            throw new ViewNotFoundException("Unable to find template file: " . $template);
+            throw new ViewNotFoundException("MVC: Unable to find template file: " . $template);
         }
 
         if (!file_exists($filename)) {
-            throw new ViewNotFoundException("Unable to find view file: " . $filename);
+            throw new ViewNotFoundException("MVC: Unable to find view file: " . $filename);
         }
 
         //$params['_CONFIG'] = $_CONFIG;

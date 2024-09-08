@@ -2,6 +2,7 @@
 
 namespace benjaminzwahlen\bracemvc;
 
+use benjaminzwahlen\bracemvc\common\exceptions\InvalidRoutesFileException;
 use benjaminzwahlen\bracemvc\common\exceptions\MethodNotAllowedException;
 use benjaminzwahlen\bracemvc\common\exceptions\RouteNotFoundException;
 
@@ -78,14 +79,13 @@ class Route
 class Router
 {
 
-    private ?array $routes;
+    private ?array $routes = [];
+    private string $routeFilePath;
 
     public function __construct(string $filename = null)
     {
-        if ($filename == null)
-            $this->routes = array();
-        else
-            $this->routes = yaml_parse_file($filename);
+        if ($filename != null)
+            $this->routeFilePath = $filename;
     }
 
 
@@ -131,15 +131,22 @@ class Router
 
     public function match(string $path, string $methodString): ?Route
     {
+        $routes = yaml_parse_file($this->routeFilePath);
+        if ($routes === false)
+        {
+            //There was am error processing the routes yaml file
+            throw new InvalidRoutesFileException("MVC: Unable to parse routes file: " . $this->routeFilePath);
+        }
+
+        $this->routes = $routes;
+        
 
         $mismatchedMethod = 0;
         foreach ($this->routes as $route) {
-            $mismatchedMethod = 0;
-
             $checkMatch = Router::pathMatches($path, $route['path']);
 
             if ($checkMatch["matched"]) {
-                //There's  match, check the allowed methods
+                //There's a match, check the allowed methods
                 if ($route['methods'] == $methodString)
                     return Route::parse($route, $checkMatch["tokenArray"]);
                 else {
@@ -150,8 +157,8 @@ class Router
         }
 
         if ($mismatchedMethod > 0)
-            throw new MethodNotAllowedException($path . " tried: " . $methodString);
+            throw new MethodNotAllowedException("MVC: method not allowed on " . $path . " tried: " . $methodString);
         else
-            throw new RouteNotFoundException($path);
+            throw new RouteNotFoundException("MVC: Unable to match path: " . $path);
     }
 }
