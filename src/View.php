@@ -12,6 +12,7 @@ class View
     {
         $filename = "../app/views/" . $viewName . ".view.php";
 
+
         $template = "../app/views/layouts/" . $layoutName . ".view.php";
 
         if (!file_exists($template)) {
@@ -22,7 +23,9 @@ class View
             throw new ViewNotFoundException("MVC: Unable to find view file: " . $filename);
         }
 
+        //$params['_CONFIG'] = $_CONFIG;
         extract(["_" => $params], EXTR_OVERWRITE);
+
         unset($params);
 
         try {
@@ -30,12 +33,12 @@ class View
             ob_start();
             require_once $filename;
             $body = ob_get_contents();
-
+            ob_clean();
             extract(["page_body_contents" => $body], EXTR_OVERWRITE);
 
             require_once $template;
-            $page = ob_get_clean();
-
+            $page = ob_get_contents();
+            ob_clean();
             return $page;
         } catch (\Throwable $e) {
             ob_clean();

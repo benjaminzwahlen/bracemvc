@@ -65,13 +65,16 @@ class Route
     public static function parse(array $r, array $tokenArray_ = null): Route
     {
         $route = new Route();
-        $route->method = Method::tryFrom($r['methods']);
-        $route->controllerName = $r['controller'];
-        $route->functionName = $r['function'];
-        $route->path = $r['path'];
-        $route->requiredPermission = $r['permission'];
-        $route->tokenArray = $tokenArray_;
-
+        try {
+            $route->method = Method::from($r['methods']);
+            $route->controllerName = $r['controller'];
+            $route->functionName = $r['function'];
+            $route->path = $r['path'];
+            $route->requiredPermission = $r['permission'];
+            $route->tokenArray = $tokenArray_;
+        } catch (\Throwable $e) {
+            throw new InvalidRoutesFileException($e);
+        }
         return $route;
     }
 }
@@ -132,14 +135,13 @@ class Router
     public function match(string $path, string $methodString): ?Route
     {
         $routes = yaml_parse_file($this->routeFilePath);
-        if ($routes === false)
-        {
+        if ($routes === false) {
             //There was am error processing the routes yaml file
             throw new InvalidRoutesFileException("MVC: Unable to parse routes file: " . $this->routeFilePath);
         }
 
         $this->routes = $routes;
-        
+
 
         $mismatchedMethod = 0;
         foreach ($this->routes as $route) {

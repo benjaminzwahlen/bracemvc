@@ -76,26 +76,9 @@ class App
 
 			if ($page != null)
 				print($page);
-		} catch (\Exception $e) {
-
-			//Exception has been caught
-			//For production, render the application defined error page.
+		} catch (\Throwable $e) {
 
 			$onError($e);
-			//$params = ["error"=>$e];
-			//echo View::renderView("default", "error", $params);
-
-			//For non-production, render a much more detailed error page.
-
-		} catch (\Error $e) {
-
-			//Exception has been caught
-			//For production, render the application defined error page.
-			$onError($e);
-			//$params = ["error"=>$e];
-			//echo View::renderView("default", "error", $params);
-
-			//For non-production, render a much more detailed error page.
 		}
 	}
 }
