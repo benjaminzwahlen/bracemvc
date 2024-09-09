@@ -3,9 +3,6 @@
 namespace benjaminzwahlen\bracemvc;
 
 use benjaminzwahlen\bracemvc\common\exceptions\ViewNotFoundException;
-use benjaminzwahlen\bracemvc\common\storage\session\AbstractSessionManager;
-
-use benjaminzwahlen\bracemvc\common\storage\session\User;
 
 class View
 {
@@ -25,22 +22,24 @@ class View
             throw new ViewNotFoundException("MVC: Unable to find view file: " . $filename);
         }
 
-        //$params['_CONFIG'] = $_CONFIG;
         extract(["_" => $params], EXTR_OVERWRITE);
         unset($params);
 
-        ob_start();
-        require_once $filename;
-        $body = ob_get_clean();
+        try {
 
+            ob_start();
+            require_once $filename;
+            $body = ob_get_contents();
 
-        extract(["page_body_contents" => $body], EXTR_OVERWRITE);
+            extract(["page_body_contents" => $body], EXTR_OVERWRITE);
 
-        ob_start();
-        require_once $template;
-        $page = ob_get_clean();
+            require_once $template;
+            $page = ob_get_clean();
 
-
-        return $page;
+            return $page;
+        } catch (\Throwable $e) {
+            ob_clean();
+            throw new \Exception($e);
+        }
     }
 }
