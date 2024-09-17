@@ -2,11 +2,11 @@
 
 namespace benjaminzwahlen\bracemvc\messagequeues;
 
-use MessageQueueInterface;
+use benjaminzwahlen\bracemvc\messagequeues\MessageQueueInterface as MessagequeuesMessageQueueInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RabbitMQ implements MessageQueueInterface
+class RabbitMQ implements MessagequeuesMessageQueueInterface
 {
     public static string $host;
     public static string $port;
