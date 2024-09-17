@@ -9,7 +9,7 @@ class EmailTaskMessage extends AbstractTaskMessage
 
     public function __construct(string $path_, $emailId_)
     {
-        $this->__construct($path_);
+        parent::__construct($path_);
         $this->emailId = $emailId_;
     }
 }
