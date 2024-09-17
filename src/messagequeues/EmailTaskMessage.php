@@ -2,7 +2,7 @@
 
 namespace benjaminzwahlen\bracemvc\messagequeues;
 
-class EmailTaskMessage implements AbstractTaskMessage
+class EmailTaskMessage extends AbstractTaskMessage
 {
 
     public int $emailId;

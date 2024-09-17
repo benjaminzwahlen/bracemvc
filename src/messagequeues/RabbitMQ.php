@@ -21,10 +21,10 @@ class RabbitMQ implements MessagequeuesMessageQueueInterface
 
     public static function init($host_, $port_, $username_, $password_)
     {
-        RabbitMQ::$passive = $host_;
-        RabbitMQ::$durable = $port_;
-        RabbitMQ::$exclusive = $username_;
-        RabbitMQ::$autoDelete = $password_;
+        RabbitMQ::$host = $host_;
+        RabbitMQ::$port = $port_;
+        RabbitMQ::$username = $username_;
+        RabbitMQ::$password = $password_;
     }
 
 
