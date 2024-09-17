@@ -2,11 +2,10 @@
 
 namespace benjaminzwahlen\bracemvc\messagequeues;
 
-use benjaminzwahlen\bracemvc\messagequeues\MessageQueueInterface as MessagequeuesMessageQueueInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RabbitMQ implements MessagequeuesMessageQueueInterface
+class RabbitMQ implements MessageQueueInterface
 {
     public static string $host;
     public static string $port;
@@ -16,7 +15,7 @@ class RabbitMQ implements MessagequeuesMessageQueueInterface
     public static bool $passive = false;
     public static bool $durable = true;
     public static bool $exclusive = false;
-    public static bool $autoDelete = true;
+    public static bool $autoDelete = false;
 
 
     public static function init($host_, $port_, $username_, $password_)
@@ -43,11 +42,46 @@ class RabbitMQ implements MessagequeuesMessageQueueInterface
         );
 
         $msg = new AMQPMessage(
-            json_encode($data),
+            serialize($data),
             array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
         );
 
         $channel->basic_publish($msg, '', $queueName);
+
+        $channel->close();
+        $connection->close();
+    }
+
+
+    public static function registerWorker(string $queueName, callable $userCallback)
+    {
+
+
+        $connection = new AMQPStreamConnection(RabbitMQ::$host, RabbitMQ::$port, RabbitMQ::$username, RabbitMQ::$password);
+        $channel = $connection->channel();
+
+        $channel->queue_declare(
+            $queueName,
+            RabbitMQ::$passive,
+            RabbitMQ::$durable,
+            RabbitMQ::$exclusive,
+            RabbitMQ::$autoDelete
+        );
+
+
+        $localCallback = function ($msg) use ($userCallback) {
+            $task = unserialize($msg->getBody());
+            if (true === call_user_func($userCallback, $task))
+                $msg->ack();
+        };
+
+        $channel->basic_consume($queueName, '', false, false, false, false, $localCallback);
+
+        try {
+            $channel->consume();
+        } catch (\Throwable $exception) {
+            echo $exception->getMessage();
+        }
 
         $channel->close();
         $connection->close();

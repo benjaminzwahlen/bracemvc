@@ -5,11 +5,8 @@ namespace benjaminzwahlen\bracemvc\messagequeues;
 class EmailTaskMessage extends AbstractTaskMessage
 {
 
-    public int $emailId;
-
-    public function __construct(string $path_, $emailId_)
+    public function __construct($emailId_)
     {
-        parent::__construct($path_);
-        $this->emailId = $emailId_;
+        parent::__construct("/sendemail", ["emailId" => $emailId_]);
     }
 }
