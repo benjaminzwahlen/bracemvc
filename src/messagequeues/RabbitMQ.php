@@ -14,7 +14,7 @@ class RabbitMQ implements MessagequeuesMessageQueueInterface
     public static string $password;
 
     public static bool $passive = false;
-    public static bool $durable = false;
+    public static bool $durable = true;
     public static bool $exclusive = false;
     public static bool $autoDelete = true;
 
