@@ -2,8 +2,7 @@
     "name": "benjaminzwahlen/bracemvc",
     "description": "New MVC router for my projects",
     "require": {
-        "php": "^8.2",
-        "php-amqplib/php-amqplib": "^3.2"
+        "php": "^8.2"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
