@@ -32,15 +32,6 @@ class RabbitMQ implements MessageQueueInterface
         $connection = new AMQPStreamConnection(RabbitMQ::$host, RabbitMQ::$port, RabbitMQ::$username, RabbitMQ::$password);
 
         $channel = $connection->channel();
-
-        $channel->queue_declare(
-            $queueName,
-            RabbitMQ::$passive,
-            RabbitMQ::$durable,
-            RabbitMQ::$exclusive,
-            RabbitMQ::$autoDelete
-        );
-
         $msg = new AMQPMessage(
             serialize($data),
             array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
@@ -55,32 +46,65 @@ class RabbitMQ implements MessageQueueInterface
 
     public static function registerWorker(string $queueName, callable $userCallback)
     {
-
-
         $connection = new AMQPStreamConnection(RabbitMQ::$host, RabbitMQ::$port, RabbitMQ::$username, RabbitMQ::$password);
         $channel = $connection->channel();
 
+        $retryQueueName = $queueName . "_retry";
+        $queueExchangeName = $queueName . "_DLX";
+        $retryQueueExchangeName = $retryQueueName . "_DLX";
+
+
+        $channel->exchange_declare($queueExchangeName, 'direct', false, true);
+        $channel->exchange_declare($retryQueueExchangeName, 'direct', false, true);
+
+
+        //Standard queue
         $channel->queue_declare(
             $queueName,
             RabbitMQ::$passive,
             RabbitMQ::$durable,
             RabbitMQ::$exclusive,
-            RabbitMQ::$autoDelete
+            RabbitMQ::$autoDelete,
+            false,
+            new \PhpAmqpLib\Wire\AMQPTable([
+                'x-dead-letter-exchange' => '',
+                'x-dead-letter-routing-key' => $retryQueueName
+            ])
         );
+        $channel->queue_bind($queueName, $queueExchangeName);
+
+        // Retry queue with TTL
+        $channel->queue_declare($retryQueueName, false, true, false, false, false, new \PhpAmqpLib\Wire\AMQPTable([
+            'x-dead-letter-exchange' => '',
+            'x-dead-letter-routing-key' => $queueName,
+            'x-message-ttl' => 5000
+        ]));
+        $channel->queue_bind($retryQueueName, $retryQueueExchangeName);
+
 
 
         $localCallback = function ($msg) use ($userCallback) {
-            $task = unserialize($msg->getBody());
-            if (true === call_user_func($userCallback, $task))
-                $msg->ack();
+            try {
+                $count = 0;
+                if ($msg->has("application_headers"))
+                    $count = $msg->get("application_headers")->getNativeData()["x-death"][0]["count"];
+
+                $task = unserialize($msg->getBody());
+                if (false === call_user_func($userCallback, $task)) {
+                    echo "Worker failed task. Fail countr = " . ($count + 1) . "\n";
+                    $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
+                } else
+                    $msg->ack();
+            } catch (\Throwable $t) {
+                echo "FAILED " . $t->getMessage() . "\n";
+                $msg->delivery_info['channel']->basic_nack($msg->delivery_info['delivery_tag']);
+            }
         };
 
         $channel->basic_consume($queueName, '', false, false, false, false, $localCallback);
 
-        try {
-            $channel->consume();
-        } catch (\Throwable $exception) {
-            echo $exception->getMessage();
+        while (count($channel->callbacks)) {
+            $channel->wait();
         }
 
         $channel->close();

@@ -45,7 +45,7 @@ class App
 
 
 
-	public function run(string $path, string $requestMethod, array &$_G, array &$_P, $onError)
+	public function run(string $path, string $requestMethod, array &$_G, array &$_P, $onError = null)
 	{
 		try {
 			$routePathString = "/" . trim($path, "/");
@@ -78,7 +78,10 @@ class App
 				print($page);
 		} catch (\Throwable $e) {
 
-			$onError($e);
+			if (is_callable($onError))
+				$onError($e);
+			else
+				throw $e;
 		}
 	}
 }
