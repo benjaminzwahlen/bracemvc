@@ -59,6 +59,7 @@ class Route
     public ?string $path;
     public ?array $tokenArray = null;
     public ?string $requiredPermission = null;
+    public bool $isAjax = false;
 
     private function __construct() {}
 
@@ -71,6 +72,7 @@ class Route
             $route->functionName = $r['function'];
             $route->path = $r['path'];
             $route->requiredPermission = $r['permission'];
+            $route->isAjax = $r['ajax'];
             $route->tokenArray = $tokenArray_;
         } catch (\Throwable $e) {
             throw new InvalidRoutesFileException($e);
@@ -132,7 +134,7 @@ class Router
         return $arr;
     }
 
-    public function match(string $path, string $methodString): ?Route
+    public function match(string $path, string $methodString, bool $isAjax_): ?Route
     {
         $routes = yaml_parse_file($this->routeFilePath);
         if ($routes === false) {
@@ -148,10 +150,15 @@ class Router
             $checkMatch = Router::pathMatches($path, $route['path']);
 
             if ($checkMatch["matched"]) {
+
                 //There's a match, check the allowed methods
-                if ($route['methods'] == $methodString)
-                    return Route::parse($route, $checkMatch["tokenArray"]);
-                else {
+                if ($route['methods'] == $methodString) {
+                    $routeObj = Route::parse($route, $checkMatch["tokenArray"]);
+                    //Methods also matches but make sure the the ajax status is also matches
+                    if ($isAjax_ == $routeObj->isAjax) {
+                        return $routeObj;
+                    }
+                } else {
                     //It matches on path but the method doesn't match
                     $mismatchedMethod += 1;
                 }

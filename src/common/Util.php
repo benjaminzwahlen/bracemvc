@@ -4,14 +4,24 @@ namespace benjaminzwahlen\bracemvc\common;
 
 class Util
 {
-    public static function esc($str)
+
+    /**
+     * Pass through the $_SERVER array. Function will check for the HTTP_X_REQUESTED_WITH key
+     *
+     */
+    public static function isAjaxRequest(array $server): bool
+    {
+        return  isset($server['HTTP_X_REQUESTED_WITH']) and strtolower($server['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    public static function esc($str): string
     {
         if (is_null($str))
             return "";
         return htmlspecialchars($str);
     }
 
-    public static function jTraceEx($e, $seen = null)
+    public static function jTraceEx($e, $seen = null): string
     {
         $starter = $seen ? 'Caused by: ' : '';
         $result = array();
@@ -51,7 +61,7 @@ class Util
         return $result;
     }
 
-    public static function getToken($length)
+    public static function getToken($length): string
     {
         $token = "";
         $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -64,7 +74,7 @@ class Util
         return $token;
     }
 
-    private static function cryptoRandSecure($min, $max)
+    private static function cryptoRandSecure($min, $max): string
     {
         $range = $max - $min;
         if ($range < 1) {

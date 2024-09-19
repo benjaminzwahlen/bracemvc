@@ -2,8 +2,6 @@
 
 namespace benjaminzwahlen\bracemvc;
 
-use benjaminzwahlen\bracemvc\common\BraceUser;
-use benjaminzwahlen\bracemvc\common\exceptions\AccessDeniedException;
 use benjaminzwahlen\bracemvc\common\exceptions\ControllerNotFoundException;
 use benjaminzwahlen\bracemvc\common\exceptions\FunctionNotFoundException;
 use benjaminzwahlen\bracemvc\Request;
@@ -15,11 +13,17 @@ require 'functions.php';
 class App
 {
 	private Router $router;
+	public bool $isProd;
+	public bool $isAjax = false;
 	private AbstractController $controller;
 
-	public function __construct(Router &$router)
+	public function __construct(Router &$router, bool $isProd_)
 	{
 		$this->router =  &$router;
+		$this->isProd =  $isProd_;
+		if ($isProd_) {
+			error_reporting(E_ERROR | E_PARSE);
+		}
 	}
 	private function searchForController($dir, $search)
 	{
@@ -45,12 +49,12 @@ class App
 
 
 
-	public function run(string $path, string $requestMethod, array &$_G, array &$_P, $onError = null)
+	public function run(string $path, string $requestMethod, bool $isAjax, array &$_G, array &$_P, $onError = null)
 	{
 		try {
 			$routePathString = "/" . trim($path, "/");
 
-			$request = Request::parse($this->router, $routePathString, $requestMethod, $_G, $_P);
+			$request = Request::parse($this->router, $routePathString, $requestMethod, $isAjax, $_G, $_P);
 
 			$controllerPath = $this->searchForController('../app/controllers', $request->route->controllerName);
 			if ($controllerPath == null)
@@ -74,14 +78,21 @@ class App
 			else
 				$page = call_user_func_array([$this->controller, $request->route->functionName], array($request));
 
-			if ($page != null)
-				print($page);
-		} catch (\Throwable $e) {
-
-			if (is_callable($onError))
-				$onError($e);
-			else
-				throw $e;
+				if ($page != null) {
+					if ($isAjax)
+						header("Content-type: application/json; charset=utf-8");
+					else
+						header("Content-type: text/html; charset=utf-8");
+	
+					print($page);
+				}
+			} catch (\Throwable $e) {
+	
+				if (is_callable($onError))
+					$onError($e, $isAjax);
+				else
+					throw $e;
+			}
 		}
 	}
-}
+	
