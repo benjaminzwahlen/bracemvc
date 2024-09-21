@@ -7,10 +7,10 @@ use benjaminzwahlen\bracemvc\common\exceptions\DatabaseConnectionException;
 class DB
 {
     public static $db = null;
-    private string $host;
-    private string $user;
-    private string $password;
-    private string $dbName;
+    private static string $host;
+    private static string $user;
+    private static string $password;
+    private static string $dbName;
 
     public static function init($host, $user,  #[\SensitiveParameter] $password, $dbName)
     {
@@ -21,7 +21,7 @@ class DB
             DB::$user = $user;
             DB::$password = $password;
             DB::$dbName = $dbName;
-            
+
         } catch (\Exception $e) {
             throw new DatabaseConnectionException("Unable to connect to database: " . $e->getMessage());
         }
