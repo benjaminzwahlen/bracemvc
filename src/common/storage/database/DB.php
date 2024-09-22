@@ -33,6 +33,11 @@ class DB
 
     public static function refreshConnection()
     {
-        if( !\mysqli_ping(DB::$db) ) DB::$db = new \mysqli(DB::$host, DB::$user, DB::$password, DB::$dbName);
+        if( !\mysqli_ping(DB::$db) ) 
+        {
+            echo "Creating a new connection!";
+            DB::$db = new \mysqli(DB::$host, DB::$user, DB::$password, DB::$dbName);
+            
+        }
     }
 }
