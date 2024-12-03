@@ -2,10 +2,12 @@
 
 namespace benjaminzwahlen\bracemvc;
 
+use benjaminzwahlen\bracemvc\common\enums\Environment;
 use benjaminzwahlen\bracemvc\common\exceptions\ControllerNotFoundException;
 use benjaminzwahlen\bracemvc\common\exceptions\FunctionNotFoundException;
 use benjaminzwahlen\bracemvc\Request;
 use benjaminzwahlen\bracemvc\Router;
+
 
 require 'functions.php';
 
@@ -13,15 +15,15 @@ require 'functions.php';
 class App
 {
 	private Router $router;
-	public bool $isProd;
+	public Environment $env;
 	public bool $isAjax = false;
 	private AbstractController $controller;
 
-	public function __construct(Router &$router, bool $isProd_)
+	public function __construct(Router &$router, Environment $env_)
 	{
 		$this->router =  &$router;
-		$this->isProd =  $isProd_;
-		if ($isProd_) {
+		$this->env =  $env_;
+		if ($this->env == Environment::PROD) {
 			error_reporting(E_ERROR | E_PARSE);
 		}
 	}
