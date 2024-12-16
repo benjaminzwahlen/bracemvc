@@ -65,7 +65,7 @@ class App
 
 			require_once $controllerPath;
 
-			$this->controller = new $request->route->controllerName();
+			$this->controller = new $request->route->controllerName($request);
 
 			if (!method_exists($this->controller, $request->route->functionName))
 				throw new FunctionNotFoundException("MVC: Could not find function " . $request->route->functionName . " on " . $request->route->controllerName);

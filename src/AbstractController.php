@@ -9,7 +9,7 @@ abstract class AbstractController
 
 	private array $interceptors = [];
 
-	public function __construct()
+	public function __construct(Request $request)
 	{
 	}
 
