@@ -5,6 +5,6 @@ enum Environment: string
 {
     case DEV = "DEV";
     case TEST = "TEST";
-    case UAT = "UAT";
+    case QA = "QA";
     case PROD = "PROD";
 }
