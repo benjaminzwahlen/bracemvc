@@ -59,6 +59,7 @@ class Route
     public ?string $path;
     public ?array $tokenArray = null;
     public ?string $requiredPermission = null;
+    public ?string $requiredModule = null;
     public bool $isAjax = false;
 
     private function __construct() {}
@@ -72,6 +73,7 @@ class Route
             $route->functionName = $r['function'];
             $route->path = $r['path'];
             $route->requiredPermission = $r['permission'];
+            $route->requiredModule = $r['module'];
             $route->isAjax = $r['ajax'];
             $route->tokenArray = $tokenArray_;
         } catch (\Throwable $e) {
