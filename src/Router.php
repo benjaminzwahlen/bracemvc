@@ -73,7 +73,7 @@ class Route
             $route->functionName = $r['function'];
             $route->path = $r['path'];
             $route->requiredPermission = $r['permission'];
-            $route->requiredModule = $r['module'];
+            $route->requiredModule = $r['module'] ?? null;
             $route->isAjax = $r['ajax'];
             $route->tokenArray = $tokenArray_;
         } catch (\Throwable $e) {
