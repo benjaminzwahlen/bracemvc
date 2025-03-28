@@ -64,7 +64,7 @@ class Route
 
     private function __construct() {}
 
-    public static function parse(array $r, array $tokenArray_ = null): Route
+    public static function parse(array $r, ?array $tokenArray_ = null): Route
     {
         $route = new Route();
         try {
@@ -89,7 +89,7 @@ class Router
     private ?array $routes = [];
     private string $routeFilePath;
 
-    public function __construct(string $filename = null)
+    public function __construct(?string $filename = null)
     {
         if ($filename != null)
             $this->routeFilePath = $filename;
