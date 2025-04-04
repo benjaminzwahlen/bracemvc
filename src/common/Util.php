@@ -61,6 +61,18 @@ class Util
         return $result;
     }
 
+    public static function getSimpleToken($length): string
+    {
+        $token = "";
+        $codeAlphabet = "ABCDEFGHJKMNPQRSTUVWXYZ";
+        $codeAlphabet .= "23456789";
+        $max = strlen($codeAlphabet) - 1;
+        for ($i = 0; $i < $length; $i++) {
+            $token .= $codeAlphabet[Util::cryptoRandSecure(0, $max)];
+        }
+        return $token;
+    }
+
     public static function getToken($length): string
     {
         $token = "";
