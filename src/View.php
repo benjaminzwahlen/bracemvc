@@ -45,4 +45,21 @@ class View
             throw new \Exception($e);
         }
     }
+
+    public static function renderSingleView(string $viewName, array &$params)
+    {
+        $filename = "../app/views/" . $viewName . ".view.php";
+        extract(["_" => $params], EXTR_OVERWRITE);
+        unset($params);
+        try {
+            ob_start();
+            require_once $filename;
+            $body = ob_get_contents();
+            ob_clean();
+            return $body;
+        } catch (\Throwable $e) {
+            ob_clean();
+            throw new \Exception($e);
+        }
+    }
 }
