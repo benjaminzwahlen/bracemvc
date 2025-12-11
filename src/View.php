@@ -37,11 +37,10 @@ class View
             extract(["page_body_contents" => $body], EXTR_OVERWRITE);
 
             require_once $template;
-            $page = ob_get_contents();
-            ob_clean();
+            $page = ob_get_clean();
             return $page;
         } catch (\Throwable $e) {
-            ob_clean();
+            ob_end_clean();
             throw new \Exception($e);
         }
     }
@@ -54,11 +53,10 @@ class View
         try {
             ob_start();
             require_once $filename;
-            $body = ob_get_contents();
-            ob_clean();
+            $body = ob_get_clean();
             return $body;
         } catch (\Throwable $e) {
-            ob_clean();
+            ob_end_clean();
             throw new \Exception($e);
         }
     }
