@@ -41,7 +41,7 @@ class View
             return $page;
         } catch (\Throwable $e) {
             ob_end_clean();
-            throw new \Exception($e);
+            throw new $e;
         }
     }
 
@@ -52,12 +52,12 @@ class View
         unset($params);
         try {
             ob_start();
-            require_once $filename;
+            require $filename;
             $body = ob_get_clean();
             return $body;
         } catch (\Throwable $e) {
             ob_end_clean();
-            throw new \Exception($e);
+            throw new $e;
         }
     }
 }
