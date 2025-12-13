@@ -2,6 +2,8 @@
 
 namespace benjaminzwahlen\bracemvc\common;
 
+use Throwable;
+
 class Util
 {
 
@@ -19,6 +21,55 @@ class Util
         if (is_null($str))
             return "";
         return htmlspecialchars($str);
+    }
+    
+    function javaStyleTrace(Throwable $e): string
+    {
+        $lines = [];
+
+        while ($e) {
+            $header = sprintf(
+                "%s: %s",
+                get_class($e),
+                $e->getMessage()
+            );
+
+            $lines[] = $e->getPrevious()
+                ? "Caused by: " . $header
+                : $header;
+
+            $trace = $e->getTrace();
+
+            // First frame = throw location
+            $lines[] = sprintf(
+                "   at %s(%s:%d)",
+                $trace[0]['class'] ?? '(main)',
+                basename($e->getFile()),
+                $e->getLine()
+            );
+
+            foreach ($trace as $frame) {
+                if (!isset($frame['file'], $frame['line'])) {
+                    continue;
+                }
+
+                $method =
+                    ($frame['class'] ?? '') .
+                    (isset($frame['class']) ? '.' : '') .
+                    ($frame['function'] ?? '');
+
+                $lines[] = sprintf(
+                    "   at %s(%s:%d)",
+                    $method ?: '(main)',
+                    basename($frame['file']),
+                    $frame['line']
+                );
+            }
+
+            $e = $e->getPrevious();
+        }
+
+        return implode("\n", $lines);
     }
 
     public static function getSimpleToken($length): string
