@@ -23,7 +23,7 @@ class Util
         return htmlspecialchars($str);
     }
     
-    function javaStyleTrace(Throwable $e): string
+    public static function javaStyleTrace(Throwable $e): string
     {
         $lines = [];
 
