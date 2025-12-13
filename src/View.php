@@ -41,7 +41,7 @@ class View
             return $page;
         } catch (\Throwable $e) {
             ob_end_clean();
-            throw new $e;
+            throw $e;
         }
     }
 
@@ -57,7 +57,7 @@ class View
             return $body;
         } catch (\Throwable $e) {
             ob_end_clean();
-            throw new $e;
+            throw $e;
         }
     }
 }
