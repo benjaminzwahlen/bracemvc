@@ -58,13 +58,6 @@ class App
 
 			$request = Request::parse($this->router, $routePathString, $requestMethod, $isAjax, $_G, $_P);
 
-			$controllerPath = $this->searchForController('../app/controllers', $request->route->controllerName);
-			if ($controllerPath == null)
-				throw new ControllerNotFoundException("MVC: Unable to find controller: " . $request->route->controllerName);
-
-
-			require_once $controllerPath;
-
 			$this->controller = new $request->route->controllerName($request);
 
 			if (!method_exists($this->controller, $request->route->functionName))
