@@ -15,12 +15,12 @@ require 'functions.php';
 
 class App
 {
-	private Router $router;
+	private RouterInterface $router;
 	public Environment $env;
 	public bool $isAjax = false;
 	private AbstractController $controller;
 
-	public function __construct(Router &$router, Environment $env_)
+	public function __construct(RouterInterface &$router, Environment $env_)
 	{
 		$this->router =  &$router;
 		$this->env =  $env_;
@@ -28,29 +28,6 @@ class App
 			error_reporting(E_ERROR | E_PARSE);
 		}
 	}
-	private function searchForController($dir, $search)
-	{
-		$ffs = scandir($dir);
-
-		unset($ffs[array_search('.', $ffs, true)]);
-		unset($ffs[array_search('..', $ffs, true)]);
-
-		// prevent empty ordered elements
-		if (count($ffs) < 1)
-			return;
-
-		foreach ($ffs as $ff) {
-			if (is_dir($dir . '/' . $ff)) {
-				$res = $this->searchForController($dir . '/' . $ff, $search);
-				if ($res != null)
-					return $res;
-			} else if ($ff === $search . ".php")
-				return $dir . '/' . $ff;
-		}
-		return null;
-	}
-
-
 
 	public function run(string $path, string $requestMethod, bool $isAjax, array &$_G, array &$_P, $onError = null)
 	{
@@ -58,7 +35,7 @@ class App
 			RequestTimer::mark("app_start");
 			$routePathString = "/" . trim($path, "/");
 
-			$request = Request::parse($this->router, $routePathString, $requestMethod, $isAjax, $_G, $_P);
+			$request = Request::parse($this->router, $routePathString, $requestMethod, $isAjax, $_G, $_P, $this->env);
 			RequestTimer::mark("route_found");
 
 			$this->controller = new $request->route->controllerName($request);

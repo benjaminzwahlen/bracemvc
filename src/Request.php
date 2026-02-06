@@ -2,6 +2,7 @@
 namespace benjaminzwahlen\bracemvc;
 
 use benjaminzwahlen\bracemvc\common\Bag;
+use benjaminzwahlen\bracemvc\common\enums\Environment;
 
 class Request
 {
@@ -19,9 +20,10 @@ class Request
         return $this->method == Method::POST;
     }
 
-    public static function parse(Router $router, string $routePathString, string $methodString, bool $isAjax_, array &$get, array &$post): ?Request
+    public static function parse(RouterInterface $router, string $routePathString, string $methodString, bool $isAjax_, array &$get, array &$post, Environment $env): ?Request
     {
-        $route = $router->match($routePathString, $methodString, $isAjax_);
+        
+        $route = $router->match($routePathString, $methodString, $isAjax_, $env);
 
         $request = new Request();
         $request->routeString = $routePathString;
