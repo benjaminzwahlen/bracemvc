@@ -34,7 +34,7 @@ class FastRouter implements RouterInterface
         $dispatcher = cachedDispatcher(function (RouteCollector $r) {
             require_once $this->routeFilePath;
         }, [
-            'cacheFile' => __DIR__ . '/../../../../cache/routes.cache',
+            'cacheFile' => __DIR__ . '/../../../../cache/' . basename($this->routeFilePath) . '.cache',
             'cacheDisabled' => $env == Environment::DEV,
         ]);
 
