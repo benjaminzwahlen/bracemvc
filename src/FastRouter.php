@@ -15,6 +15,7 @@ class FastRouter implements RouterInterface
 {
 
     private string $routeFilePath;
+    private $dispatcher = null;
 
     public function __construct(?string $filename = null)
     {
@@ -31,14 +32,16 @@ class FastRouter implements RouterInterface
             throw new InvalidRoutesFileException("MVC: Routes file not found: " . $this->routeFilePath);
         }
 
-        $dispatcher = cachedDispatcher(function (RouteCollector $r) {
-            require_once $this->routeFilePath;
-        }, [
-            'cacheFile' => __DIR__ . '/../../../../cache/' . basename($this->routeFilePath) . '.cache',
-            'cacheDisabled' => $env == Environment::DEV,
-        ]);
+        if ($this->dispatcher == null) {
+             $this->dispatcher = cachedDispatcher(function (RouteCollector $r) {
+                require_once $this->routeFilePath;
+            }, [
+                'cacheFile' => __DIR__ . '/../../../../cache/' . basename($this->routeFilePath) . '.cache',
+                'cacheDisabled' => $env == Environment::DEV,
+            ]);
+        }
 
-        $routeInfo = $dispatcher->dispatch($methodString, $path);
+        $routeInfo = $this->dispatcher->dispatch($methodString, $path);
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
