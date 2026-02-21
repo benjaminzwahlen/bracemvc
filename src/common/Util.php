@@ -23,6 +23,13 @@ class Util
         return htmlspecialchars($str);
     }
     
+    public static function escJS($str): string
+    {
+        if (is_null($str))
+            return "";
+        return json_encode($str, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    }
+
     public static function javaStyleTrace(Throwable $e): string
     {
         $lines = [];
