@@ -20,7 +20,7 @@ class Util
     {
         if (is_null($str))
             return "";
-        return htmlspecialchars($str);
+        return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
     }
     
     public static function escJS($str): string
