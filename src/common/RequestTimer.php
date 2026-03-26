@@ -8,10 +8,10 @@ final class RequestTimer
     private static float $requestStart = 0.0;
     private static bool $enabled = false;
 
-    public static function start(): void
+    public static function start(float $floatTime): void
     {
         self::$enabled = true;
-        self::$requestStart = $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true);
+        self::$requestStart = $floatTime;
         self::$marks = ['php_request_start' => self::$requestStart];
     }
 
@@ -34,11 +34,11 @@ final class RequestTimer
         $prev = self::$requestStart;
 
         foreach (self::$marks as $label => $time) {
-            $result[$label] = ($time - $prev) * 1000; // ms
+            $result[$label] = round($time - $prev, 5);
             $prev = $time;
         }
 
-        $result['total'] = (microtime(true) - self::$requestStart) * 1000;
+        $result['total'] = round(microtime(true) - self::$requestStart, 5);
 
         return $result;
     }
