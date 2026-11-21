@@ -2,7 +2,7 @@
     "name": "benjaminzwahlen/bracemvc",
     "description": "New MVC router for my projects",
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "nikic/fast-route": "^1.3"
     },
     "require-dev": {
